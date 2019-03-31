@@ -1,5 +1,3 @@
-
-
 #https://www.bitmex.com/api/v1/trade/bucketed?binSize=1h&partial=false&symbol=XBTUSD&count=500&reverse=false&startTime=2015-09-25T00:00:00.000Z
 
 #获取K线  请求地址:

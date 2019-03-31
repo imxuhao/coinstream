@@ -19,9 +19,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'vnpy'
-copyright = '2019, vn.py Team'
-author = 'vn.py Team'
+project = 'coinStream'
+copyright = '2019, coinStream Team'
+author = 'friedns Team'
 
 # The short X.Y version
 version = '2.0'
