@@ -5,7 +5,7 @@
 """
 
 from __future__ import division
-from datetime import datetime, timedelta
+from datetime import datetime
 from vnpy.app.cta_strategy.backtesting import BacktestingEngine
 from vnpy.app.cta_strategy.base import BacktestingMode
 
@@ -24,19 +24,19 @@ if __name__ == '__main__':
     # size 股指合约大小
     # pricetick 股指最小价格变动
     engine.set_parameters(mode=BacktestingMode.BAR,
-                          start=datetime.strptime('20180327', '%Y%m%d'),
+                          start=datetime.strptime('20170329', '%Y%m%d'),
+                          end=datetime.strptime('20190329', '%Y%m%d'),
                           slippage=0.2,
                           rate=(0.3 / 10000),
                           size=300,
                           pricetick=0.2,
                           vt_symbol="XBTUSD.BITMEX",
-                          interval="1m")
+                          interval="1h")
 
     # 在引擎中创建策略对象
     d = {}
-    engine.add_strategy(DoubleMaStrategy,d)
+    engine.add_strategy(DoubleMaStrategy, d)
 
-    #engine.initStrategy(KingKeltnerStrategy, d)
     engine.load_data()
     # 开始跑回测
     engine.run_backtesting()
@@ -44,4 +44,3 @@ if __name__ == '__main__':
     # 显示回测结果
     engine.calculate_result()
     engine.calculate_statistics()
-    engine.run_optimization()

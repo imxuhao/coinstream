@@ -39,7 +39,7 @@ class OptimizationSetting:
         self.target = ""
 
     def add_parameter(
-        self, name: str, start: float, end: float = None, step: float = None
+            self, name: str, start: float, end: float = None, step: float = None
     ):
         """"""
         if not end and not step:
@@ -94,11 +94,11 @@ class BacktestingEngine:
         self.exchange = None
         self.start = None
         self.end = None
-        self.rate = 0                    # 回测时假设的佣金比例（适用于百分比佣金）
-        self.slippage = 0                # 回测时假设的滑点
-        self.size = 1                    # 合约大小，默认为1
-        self.pricetick = 0               # 价格最小变动
-        self.capital = 1_000_000         # 回测时的起始本金（默认100万）
+        self.rate = 0  # 回测时假设的佣金比例（适用于百分比佣金）
+        self.slippage = 0  # 回测时假设的滑点
+        self.size = 1  # 合约大小，默认为1
+        self.pricetick = 0  # 价格最小变动
+        self.capital = 1_000_000  # 回测时的起始本金（默认100万）
         self.mode = BacktestingMode.BAR  # 回测模式，默认为K线
 
         self.strategy_class = None
@@ -112,21 +112,21 @@ class BacktestingEngine:
         self.callback = None
         self.history_data = []
         # 本地停止单
-        self.stop_order_count = 0     # 编号计数：stopOrderID = STOPORDERPREFIX + str(stopOrderCount)
+        self.stop_order_count = 0  # 编号计数：stopOrderID = STOPORDERPREFIX + str(stopOrderCount)
         # 本地停止单字典, key为stopOrderID，value为stopOrder对象
-        self.stop_orders = {} # 停止单撤销后不会从本字典中删除
+        self.stop_orders = {}  # 停止单撤销后不会从本字典中删除
         self.active_stop_orders = {}
 
-        self.limit_order_count = 0                # 限价单编号
-        self.limit_orders = {}                    # 限价单字典
-        self.active_limit_orders = {}             # 活动限价单字典，用于进行撮合用
+        self.limit_order_count = 0  # 限价单编号
+        self.limit_orders = {}  # 限价单字典
+        self.active_limit_orders = {}  # 活动限价单字典，用于进行撮合用
 
-        self.trade_count = 0            # 成交编号
-        self.trades = {}                # 成交字典
+        self.trade_count = 0  # 成交编号
+        self.trades = {}  # 成交字典
 
-        self.logs = []                  # 日志记录
+        self.logs = []  # 日志记录
 
-        self.daily_results = {}                 # 日线回测结果计算用
+        self.daily_results = {}  # 日线回测结果计算用
         self.daily_df = None
 
     def clear_data(self):
@@ -153,17 +153,17 @@ class BacktestingEngine:
         self.daily_results.clear()
 
     def set_parameters(
-        self,
-        vt_symbol: str,
-        interval: Interval,
-        start: datetime,
-        rate: float,
-        slippage: float,
-        size: float,
-        pricetick: float,
-        capital: int = 0,
-        end: datetime = None,
-        mode: BacktestingMode = BacktestingMode.BAR,
+            self,
+            vt_symbol: str,
+            interval: Interval,
+            start: datetime,
+            rate: float,
+            slippage: float,
+            size: float,
+            pricetick: float,
+            capital: int = 0,
+            end: datetime = None,
+            mode: BacktestingMode = BacktestingMode.BAR,
     ):
         """"""
         self.mode = mode
@@ -202,25 +202,23 @@ class BacktestingEngine:
         if self.mode == BacktestingMode.BAR:
             s = (
                 DbBarData.select()
-                # .where(
-                # (DbBarData.vt_symbol == self.vt_symbol)  &
-                # (DbBarData.interval == self.interval)
-                #  & (DbBarData.datetime >= self.start)
-                #    & (DbBarData.datetime <= self.end)
-                # )
-                .order_by(DbBarData.datetime)
+                    .where(
+                    (DbBarData.vt_symbol == self.vt_symbol) &
+                    (DbBarData.interval == self.interval)
+                    & (DbBarData.datetime >= self.start)
+                    & (DbBarData.datetime <= self.end)
+                ) .order_by(DbBarData.datetime)
             )
-            print(DbBarData.select().count())
             self.history_data = [db_bar.to_bar() for db_bar in s]
         else:
             s = (
                 DbTickData.select()
-                .where(
-                    (DbTickData.vt_symbol == self.vt_symbol) 
-                    & (DbTickData.datetime >= self.start) 
+                    .where(
+                    (DbTickData.vt_symbol == self.vt_symbol)
+                    & (DbTickData.datetime >= self.start)
                     & (DbTickData.datetime <= self.end)
                 )
-                .order_by(DbTickData.datetime)
+                    .order_by(DbTickData.datetime)
             )
             self.history_data = [db_tick.to_tick() for db_tick in s]
 
@@ -303,7 +301,7 @@ class BacktestingEngine:
 
         if not df:
             df = self.daily_df
-        
+
         if df is None:
             # Set all statistics to 0 if no trade.
             start_date = ""
@@ -442,7 +440,7 @@ class BacktestingEngine:
         """"""
         if not df:
             df = self.daily_df
-        
+
         if df is None:
             return
 
@@ -570,15 +568,15 @@ class BacktestingEngine:
 
             # Check whether limit orders can be filled.
             long_cross = (
-                order.direction == Direction.LONG 
-                and order.price >= long_cross_price 
-                and long_cross_price > 0
+                    order.direction == Direction.LONG
+                    and order.price >= long_cross_price
+                    and long_cross_price > 0
             )
 
             short_cross = (
-                order.direction == Direction.SHORT 
-                and order.price <= short_cross_price 
-                and short_cross_price > 0
+                    order.direction == Direction.SHORT
+                    and order.price <= short_cross_price
+                    and short_cross_price > 0
             )
 
             if not long_cross and not short_cross:
@@ -638,13 +636,13 @@ class BacktestingEngine:
         for stop_order in list(self.active_stop_orders.values()):
             # Check whether stop order can be triggered.
             long_cross = (
-                stop_order.direction == Direction.LONG 
-                and stop_order.price <= long_cross_price
+                    stop_order.direction == Direction.LONG
+                    and stop_order.price <= long_cross_price
             )
 
             short_cross = (
-                stop_order.direction == Direction.SHORT 
-                and stop_order.price >= short_cross_price
+                    stop_order.direction == Direction.SHORT
+                    and stop_order.price >= short_cross_price
             )
 
             if not long_cross and not short_cross:
@@ -707,7 +705,7 @@ class BacktestingEngine:
             self.strategy.on_trade(trade)
 
     def load_bar(
-        self, vt_symbol: str, days: int, interval: Interval, callback: Callable
+            self, vt_symbol: str, days: int, interval: Interval, callback: Callable
     ):
         """"""
         self.days = days
@@ -719,12 +717,12 @@ class BacktestingEngine:
         self.callback = callback
 
     def send_order(
-        self,
-        strategy: CtaTemplate,
-        order_type: CtaOrderType,
-        price: float,
-        volume: float,
-        stop: bool = False,
+            self,
+            strategy: CtaTemplate,
+            order_type: CtaOrderType,
+            price: float,
+            volume: float,
+            stop: bool = False,
     ):
         """"""
         price = round_to_pricetick(price, self.pricetick)
@@ -818,7 +816,7 @@ class BacktestingEngine:
         """
         msg = f"{self.datetime}\t{msg}"
         self.logs.append(msg)
-    
+
     def send_email(self, msg: str, strategy: CtaTemplate = None):
         """
         Send email to default receiver.
@@ -873,12 +871,12 @@ class DailyResult:
         self.trades.append(trade)
 
     def calculate_pnl(
-        self,
-        pre_close: float,
-        start_pos: float,
-        size: int,
-        rate: float,
-        slippage: float,
+            self,
+            pre_close: float,
+            start_pos: float,
+            size: int,
+            rate: float,
+            slippage: float,
     ):
         """"""
         self.pre_close = pre_close
@@ -887,7 +885,7 @@ class DailyResult:
         self.start_pos = start_pos
         self.end_pos = start_pos
         self.holding_pnl = self.start_pos * \
-            (self.close_price - self.pre_close) * size
+                           (self.close_price - self.pre_close) * size
 
         # Trading pnl is the pnl from new trade during the day
         self.trade_count = len(self.trades)
@@ -901,7 +899,7 @@ class DailyResult:
             turnover = trade.price * trade.volume * size
 
             self.trading_pnl += pos_change * \
-                (self.close_price - trade.price) * size
+                                (self.close_price - trade.price) * size
             self.end_pos += pos_change
             self.turnover += turnover
             self.commission += turnover * rate
@@ -913,19 +911,19 @@ class DailyResult:
 
 
 def optimize(
-    target_name: str,
-    strategy_class: CtaTemplate,
-    setting: dict,
-    vt_symbol: str,
-    interval: Interval,
-    start: datetime,
-    rate: float,
-    slippage: float,
-    size: float,
-    pricetick: float,
-    capital: int,
-    end: datetime,
-    mode: BacktestingMode,
+        target_name: str,
+        strategy_class: CtaTemplate,
+        setting: dict,
+        vt_symbol: str,
+        interval: Interval,
+        start: datetime,
+        rate: float,
+        slippage: float,
+        size: float,
+        pricetick: float,
+        capital: int,
+        end: datetime,
+        mode: BacktestingMode,
 ):
     """
     Function for running in multiprocessing.pool
