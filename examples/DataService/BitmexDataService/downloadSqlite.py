@@ -10,10 +10,13 @@ import requests
 from vnpy.trader.object import BarData
 from vnpy.trader.database import DbBarData, DbTickData
 
-APIKEY = ""
+
 headers = {'Bitmex-API-Key': APIKEY}
 
-
+config = open('config.json')
+setting = json.load(config)
+SYMBOLS = setting['SYMBOLS']
+APIKEY = setting['APIKEY']
 # ----------------------------------------------------------------------
 
 def generateVtBar(d):
@@ -70,8 +73,8 @@ def downMinuteBarBySymbol(symbol, period, start, end):
                          close_price=d['close'], vt_symbol="BITMEX", gateway_name="bitmexgateway")
         data.save()
 
-    endTime = time.time()
-    cost = (endTime - startTime) * 1000
+    end_time = time.time()
+    cost = (end_time - startTime) * 1000
 
     print(u'合约%s数据下载完成，耗时%s毫秒' % (symbol, cost))
 
@@ -165,7 +168,7 @@ def downHourBarBySymbol2(symbol, period, startDt, endDt):
     print(u' time.sleep')
 # ----------------------------------------------------------------------
 
-""""
+
 def downloadAllMinuteBar(start, end):
     print('-' * 50)
     print(u'开始下载合约分钟线数据')
@@ -180,7 +183,7 @@ def downloadAllMinuteBar(start, end):
     print('-' * 50)
 
 
-"""
+
 """
 if __name__ == '__main__':
     downMinuteBarBySymbol('XBTUSD', '1m', '20180329', '20180330')

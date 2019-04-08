@@ -9,9 +9,9 @@ from datetime import datetime
 from vnpy.app.cta_strategy.backtesting import BacktestingEngine
 from vnpy.app.cta_strategy.base import BacktestingMode
 
-
 if __name__ == '__main__':
     from vnpy.app.cta_strategy.strategies.double_ma_strategy import DoubleMaStrategy
+    from vnpy.app.cta_strategy.strategies.boll_channel_strategy import BollChannelStrategy
 
     # 创建回测引擎
     engine = BacktestingEngine()
@@ -34,7 +34,7 @@ if __name__ == '__main__':
                           interval="1h")
 
     # 在引擎中创建策略对象
-    d = {}
+    d = {'fast_window': 10, 'slow_window': 30}
     engine.add_strategy(DoubleMaStrategy, d)
 
     engine.load_data()
