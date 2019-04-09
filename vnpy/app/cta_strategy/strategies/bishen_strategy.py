@@ -77,7 +77,7 @@ class BiShenStrategy(CtaTemplate):
         if not am.inited:
             return
         n = 10
-        n_day_max , n_day_min = am.donchian(n)
+        n_day_max, n_day_min = am.donchian(n)
 
         long_ma = am.sma(self.long_window, array=True)
         self.long_ma0 = long_ma[-1]
@@ -105,12 +105,12 @@ class BiShenStrategy(CtaTemplate):
 
         #突破
         if long_shangyang and mid_shangyang and short_shangyang and long_mid_fa_san and mid_short_fa_san:
-            self.buy(bar.n_day_max, 1)
-            print('上扬，以{}日最高点买入  buy at price {}   {}'.format(n,n_day_max, bar.datetime))
+            self.buy(n_day_max, 1)
+            print('上，以{}最高点买入  buy at price {}   {}'.format(n, n_day_max, bar.datetime))
 
         if not long_shangyang and not mid_shangyang and not short_shangyang and long_mid_fa_san and mid_short_fa_san:
-            self.sell(bar.n_day_min, 1)
-            print('向下扬，以{}日最低点卖出  sell at price {}   {}'.format(n, n_day_min, bar.datetime))
+            self.sell(n_day_min, 1)
+            print('下，以{}最低点卖出  sell at price {}   {}'.format(n, n_day_min, bar.datetime))
 
         self.put_event()
 
