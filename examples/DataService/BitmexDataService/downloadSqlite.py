@@ -10,13 +10,11 @@ import requests
 from vnpy.trader.object import BarData
 from vnpy.trader.database import DbBarData, DbTickData
 
-
-headers = {'Bitmex-API-Key': APIKEY}
-
 config = open('config.json')
 setting = json.load(config)
 SYMBOLS = setting['SYMBOLS']
 APIKEY = setting['APIKEY']
+headers = {'Bitmex-API-Key': APIKEY}
 # ----------------------------------------------------------------------
 
 def generateVtBar(d):
@@ -134,7 +132,7 @@ def downHourBarBySymbol2(symbol, period, startDt, endDt):
     params = {
         'binSize': period,
         'partial': 'false',
-        'symbol': 'XBTUSD',
+        'symbol': symbol,
         'count': 500,
         'reverse': 'false',
         'startTime': startDt.strftime('%Y-%m-%dT%H:%M:%S.%f0Z'),
@@ -152,11 +150,11 @@ def downHourBarBySymbol2(symbol, period, startDt, endDt):
     for d in l:
         # {'timestamp': '2018-07-26T02:00:00.000Z', 'symbol': 'XBTUSD', 'open': 8240.5, 'high': 8255.5, 'low': 8206, 'close': 8224.5, 'trades': 17097, 'volume': 73042086, 'vwap': 8229.0981, 'lastSize': 6000, 'turnover': 887640041277, 'homeNotional': 8876.40041276999, 'foreignNotional': 73042086}
         # print(d)
-        data = DbBarData(symbol="XBTUSD", exchange="BITMEX",
+        data = DbBarData(symbol=symbol, exchange="BITMEX",
                          datetime=datetime.datetime.strptime(d['timestamp'], '%Y-%m-%dT%H:%M:%S.%f0Z'),
-                         interval="1h", volume=d['volume'], open_price=d['open'], high_price=d['high'],
+                         interval=period, volume=d['volume'], open_price=d['open'], high_price=d['high'],
                          low_price=d['low'],
-                         close_price=d['close'], vt_symbol="BITMEX", gateway_name="bitmexgateway")
+                         close_price=d['close'], vt_symbol='%s.%s' % (symbol, 'BITMEX'), gateway_name="bitmexgateway")
         data.save()
         #data.replace()
 
@@ -164,8 +162,7 @@ def downHourBarBySymbol2(symbol, period, startDt, endDt):
     cost = (endTime - startTime) * 1000
 
     print(u'合约%s数据下载完成，耗时%s毫秒 %s  ----  %s  ' % (symbol, cost, startDt, endDt))
-    time.sleep(10)
-    print(u' time.sleep')
+
 # ----------------------------------------------------------------------
 
 
@@ -194,18 +191,18 @@ if __name__ == '__main__':
     # downHourBarBySymbol('XBTUSD', '1h', '20170501', '20170531')
 
     deltaOneday = datetime.timedelta(days=1)
-    deltaOnemin = datetime.timedelta(minutes=5)
+    deltaOnemin = datetime.timedelta(minutes=1)
 
-    startDt = datetime.datetime.strptime('20180803', '%Y%m%d')
-    lastDt = datetime.datetime.strptime('20180804', '%Y%m%d')
+    startDt = datetime.datetime.strptime('20181110', '%Y%m%d')
+    lastDt = datetime.datetime.strptime('20190401', '%Y%m%d')
     while startDt < lastDt:
         endDt = startDt + deltaOneday + deltaOnemin
-        downHourBarBySymbol2('XBTUSD', '1h', startDt+ deltaOnemin, endDt)
+        downHourBarBySymbol2('XBTUSD', '5m', startDt + deltaOnemin, endDt)
         startDt += deltaOneday
-'''
+'''T
     startDt = datetime.datetime.strptime('20170701', '%Y%m%d')
     lastDt = datetime.datetime.strptime('20170601', '%Y%m%d')
-    downHourBarBySymbol2('XBTUSD', '1h', startDt + deltaOnemin, startDt  + deltaOneday -deltaOnemin)
+    (downHourBarBySymbol2'XBTUSD', '1h', startDt + deltaOnemin, startDt  + deltaOneday -deltaOnemin)
 '''
 # downHourBarBySymbol2('XBTUSD', '1h', startDt,endDt)
 # delta = datetime.timedelta(days=3)

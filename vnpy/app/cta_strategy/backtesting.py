@@ -6,6 +6,11 @@ import multiprocessing
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import matplotlib.dates as mdates
+from matplotlib.dates import YearLocator, MonthLocator, DateFormatter
+from mpl_finance import candlestick_ohlc
+
 import seaborn as sns
 from pandas import DataFrame
 
@@ -83,7 +88,6 @@ class OptimizationSetting:
 
 class BacktestingEngine:
     """"""
-
     engine_type = EngineType.BACKTESTING
     gateway_name = "BACKTESTING"
 
@@ -223,6 +227,43 @@ class BacktestingEngine:
             self.history_data = [db_tick.to_tick() for db_tick in s]
 
         self.output(f"历史数据加载完成，数据量：{len(self.history_data)}")
+
+    def show_figure(self):
+        plt.rcParams['font.sans-serif'] = ['SimHei']
+        plt.rcParams['axes.unicode_minus'] = False
+        data =[s.__dict__ for s in self.history_data]
+
+        df = pd.DataFrame(data,columns=['datetime','open_price','high_price','low_price','close_price'])
+        fig, ax = plt.subplots()
+
+        ax.autoscale_view()
+        ax.grid(True)
+        fig.autofmt_xdate()
+
+        candlestick_ohlc(ax,
+                         zip(mdates.date2num(df['datetime']),df['open_price'],df['high_price'],df['low_price'],df['close_price'])
+                         ,width=0.02,colordown='r',colorup='g')
+
+        tradenum = []
+        tradeinfo = []
+        tradenum2 = []
+        tradeinfo2 = []
+
+        for trade in self.trades.values():
+
+            if  trade.direction == Direction.LONG:
+                tradeinfo.append(trade.price)
+                tradenum.append(mdates.date2num(trade.datetime))
+            if trade.direction == Direction.SHORT:
+                tradeinfo2.append(trade.price)
+                tradenum2.append(mdates.date2num(trade.datetime))
+
+        ax.scatter(tradenum,tradeinfo,color='b')
+        ax.scatter(tradenum2,tradeinfo2,color='g')
+
+        ax.xaxis_date()
+
+        plt.show()
 
     def run_backtesting(self):
         """"""

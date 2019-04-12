@@ -10,8 +10,7 @@ from vnpy.app.cta_strategy.backtesting import BacktestingEngine
 from vnpy.app.cta_strategy.base import BacktestingMode
 
 if __name__ == '__main__':
-    from vnpy.app.cta_strategy.strategies.double_ma_strategy import DoubleMaStrategy
-    from vnpy.app.cta_strategy.strategies.boll_channel_strategy import BollChannelStrategy
+    from vnpy.app.cta_strategy.strategies.bishen_strategy import BiShenStrategy
 
     # 创建回测引擎
     engine = BacktestingEngine()
@@ -24,18 +23,18 @@ if __name__ == '__main__':
     # size 股指合约大小
     # pricetick 股指最小价格变动
     engine.set_parameters(mode=BacktestingMode.BAR,
-                          start=datetime.strptime('20170329', '%Y%m%d'),
-                          end=datetime.strptime('20190329', '%Y%m%d'),
+                          start=datetime.strptime('20180826', '%Y%m%d'),
+                          end=datetime.strptime('20180930', '%Y%m%d'),
                           slippage=0.2,
-                          rate=(0.3 / 10000),
+                          rate=(0.5 / 10000),
                           size=300,
                           pricetick=0.2,
                           vt_symbol="XBTUSD.BITMEX",
                           interval="1h")
 
     # 在引擎中创建策略对象
-    d = {'fast_window': 10, 'slow_window': 30}
-    engine.add_strategy(DoubleMaStrategy, d)
+    d = {'short_window': 7, 'mid_window': 14, 'long_window': 28}
+    engine.add_strategy(BiShenStrategy, d)
 
     engine.load_data()
     # 开始跑回测
@@ -44,3 +43,4 @@ if __name__ == '__main__':
     # 显示回测结果
     engine.calculate_result()
     engine.calculate_statistics()
+    engine.show_figure()
